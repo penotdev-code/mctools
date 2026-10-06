@@ -1,6 +1,6 @@
-# 🧰 Boîte à outils
+# 🧰 MC Tools
 
-Un portail « multi-tool » pour un client qui gère du foncier (terrains, finances) :
+Un portail « multi-tool » pour Marie-Claire, qui gère du foncier (terrains, immeubles, finances) :
 une page d'accueil qui rassemble des petits outils (documents, images, foncier, finances…).
 
 - **En ligne** : <https://mctools.paulpenot.fr> (protégé par un mot de passe partagé)

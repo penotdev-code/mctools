@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plans & lots</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="/css/app.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <script src="/js/tool-shell.js"></script>
+
+  <!-- ============ LISTE DES PLANS ============ -->
+  <main class="container tool-page" id="listView">
+    <h1><span aria-hidden="true">🗺️</span> Plans & lots</h1>
+    <p class="lead">Importe le plan PDF d'un immeuble et son listing Excel, dessine chaque lot sur le plan et indique son statut (vide, en travaux, nouvelle version…) et tes remarques. Exporte ensuite en Excel ou en PDF coloré.</p>
+
+    <div class="actions" style="margin:0 0 18px">
+      <label class="btn">
+        <input type="file" id="newPlanFile" accept="application/pdf,.pdf" hidden />
+        ➕ Nouveau plan (PDF)
+      </label>
+      <label class="btn btn--ghost">
+        <input type="file" id="importFile" accept=".json,application/json" hidden />
+        📥 Importer une copie
+      </label>
+    </div>
+    <p class="notice error" id="listError" hidden></p>
+
+    <div class="grid" id="projectList"></div>
+    <p class="empty" id="listEmpty" hidden>Aucun plan pour l'instant. Commence par « Nouveau plan » avec un PDF.</p>
+    <p class="notice">🔒 Les plans sont enregistrés sur ton serveur privé (sauvegardé chaque nuit). « Copie » permet d'en garder une version complète sur ton ordinateur.</p>
+  </main>
+
+  <!-- ============ ÉDITEUR ============ -->
+  <div class="editor" id="editorView" hidden>
+    <div class="editor__bar">
+      <button type="button" class="btn btn--ghost btn--small" id="backToList">← Mes plans</button>
+      <input class="input editor__name" id="projectName" aria-label="Nom du plan" maxlength="120" />
+      <span class="save-state" id="saveState"></span>
+      <span class="editor__spacer"></span>
+      <div class="btn-group" role="group" aria-label="Outil">
+        <button type="button" class="btn btn--ghost btn--small" data-mode="select" aria-pressed="true" title="Sélectionner un lot (Échap)">👆 Sélection</button>
+        <button type="button" class="btn btn--ghost btn--small" data-mode="polygon" aria-pressed="false" title="Cliquer chaque angle du lot, puis cliquer sur le 1er point ou double-cliquer (P)">⬠ Forme libre</button>
+        <button type="button" class="btn btn--ghost btn--small" data-mode="rect" aria-pressed="false" title="Cliquer-glisser pour tracer un rectangle (R)">▭ Rectangle</button>
+      </div>
+      <div class="btn-group" role="group" aria-label="Excel">
+        <label class="btn btn--ghost btn--small" title="Importer le listing Excel, ou le mettre à jour après l'avoir modifié">
+          <input type="file" id="listingFile" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden />📥 Importer l'Excel
+        </label>
+        <button type="button" class="btn btn--small" id="exportXlsx" title="Le listing avec les statuts et les remarques à jour">📊 Exporter l'Excel</button>
+      </div>
+      <div class="btn-group" role="group" aria-label="Exporter">
+        <button type="button" class="btn btn--small" id="exportPdf">📄 PDF coloré</button>
+        <button type="button" class="btn btn--ghost btn--small" id="exportCopy" title="Copie complète (plan + listing + lots) à garder sur ton ordinateur">💾 Copie</button>
+      </div>
+    </div>
+
+    <div class="editor__body">
+      <div class="stage-wrap">
+        <div class="stage-tools">
+          <button type="button" class="btn btn--ghost btn--small" id="prevPage" aria-label="Page précédente">◀</button>
+          <span id="pageInfo">Page 1 / 1</span>
+          <button type="button" class="btn btn--ghost btn--small" id="nextPage" aria-label="Page suivante">▶</button>
+          <button type="button" class="btn btn--ghost btn--small" id="choosePages" title="Choisir les pages du PDF à utiliser">📑 Pages</button>
+          <span class="editor__spacer"></span>
+          <button type="button" class="btn btn--ghost btn--small" id="zoomOut" aria-label="Dézoomer">−</button>
+          <span id="zoomInfo">100 %</span>
+          <button type="button" class="btn btn--ghost btn--small" id="zoomIn" aria-label="Zoomer">+</button>
+          <button type="button" class="btn btn--ghost btn--small" id="zoomFit">Ajuster</button>
+        </div>
+        <p class="draw-hint" id="drawHint" hidden></p>
+        <div class="stage" id="stage">
+          <div class="stage__page" id="pageBox">
+            <canvas id="pdfCanvas"></canvas>
+            <svg id="overlay" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <p class="stage__loading" id="stageLoading">Chargement du plan…</p>
+        </div>
+      </div>
+
+      <aside class="side" id="side">
+        <!-- Vue d'ensemble -->
+        <section id="overview">
+          <h2>Légende</h2>
+          <ul class="legend" id="legend"></ul>
+          <button type="button" class="btn btn--ghost btn--small" id="editStatuses">⚙️ Modifier les statuts</button>
+          <h2>Locaux <span class="count" id="rowCount"></span></h2>
+          <p class="notice" id="listingInfo"></p>
+          <input class="input" type="search" id="rowSearch" placeholder="Chercher (IDLOCAL, n° de lot, remarque…)" aria-label="Chercher un local" />
+          <div class="chips chips--small" id="placeFilter" role="group" aria-label="Filtrer">
+            <button type="button" class="chip" data-place="all" aria-pressed="true">Tous</button>
+            <button type="button" class="chip" data-place="placed" aria-pressed="false">Sur le plan</button>
+            <button type="button" class="chip" data-place="unplaced" aria-pressed="false">À placer</button>
+          </div>
+          <ul class="lot-list" id="rowList"></ul>
+          <button type="button" class="btn btn--ghost btn--small" id="addRow">➕ Ajouter un local</button>
+        </section>
+
+        <!-- Fiche d'un local -->
+        <section id="rowCard" hidden></section>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ============ FICHE (double-clic sur un lot) ============ -->
+  <dialog class="dialog dialog--wide" id="infoDialog"></dialog>
+
+  <!-- ============ RATTACHER UNE FORME À UN LOCAL ============ -->
+  <dialog class="dialog" id="linkDialog">
+    <h2>À quel local correspond cette forme&nbsp;?</h2>
+    <input class="input" type="search" id="linkSearch" placeholder="Chercher (IDLOCAL, n° de lot…)" aria-label="Chercher un local" />
+    <ul class="lot-list lot-list--scroll" id="linkList"></ul>
+    <div class="actions">
+      <button type="button" class="btn btn--ghost btn--small" id="linkLater">Plus tard</button>
+      <span class="editor__spacer"></span>
+      <button type="button" class="btn btn--ghost btn--small danger" id="linkDelete">Supprimer la forme</button>
+    </div>
+  </dialog>
+
+  <!-- ============ STATUTS ============ -->
+  <dialog class="dialog" id="statusDialog">
+    <h2>Statuts des lots</h2>
+    <p class="notice">Nom, couleur et rendu sur le plan. Le nom est celui écrit dans la colonne statut de l'Excel.</p>
+    <ul class="status-edit" id="statusEditList"></ul>
+    <div class="actions">
+      <button type="button" class="btn btn--ghost btn--small" id="addStatus">➕ Ajouter un statut</button>
+      <span class="editor__spacer"></span>
+      <button type="button" class="btn btn--ghost" id="cancelStatuses">Annuler</button>
+      <button type="button" class="btn" id="saveStatuses">Enregistrer</button>
+    </div>
+  </dialog>
+
+  <!-- ============ PAGES ============ -->
+  <dialog class="dialog" id="pagesDialog">
+    <h2>Pages du plan</h2>
+    <p class="notice">Les pages du PDF à utiliser (les autres sont masquées, y compris dans le PDF exporté). Exemple : <b>20-25</b> ou <b>3, 5, 8-10</b>. Laisse vide pour toutes.</p>
+    <input class="input" id="pagesInput" placeholder="Toutes les pages" />
+    <p class="notice error" id="pagesError" hidden></p>
+    <div class="actions">
+      <span class="editor__spacer"></span>
+      <button type="button" class="btn btn--ghost" id="cancelPages">Annuler</button>
+      <button type="button" class="btn" id="savePages">Enregistrer</button>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

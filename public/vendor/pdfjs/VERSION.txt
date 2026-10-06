@@ -1,0 +1,2 @@
+pdf.js 4.10.38 (pdfjs-dist, build legacy) — https://github.com/mozilla/pdf.js — Apache-2.0
+Récupéré avec : npm pack pdfjs-dist@4.10.38

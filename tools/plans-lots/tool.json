@@ -1,0 +1,8 @@
+{
+  "name": "Plans & lots",
+  "icon": "🗺️",
+  "category": "foncier",
+  "description": "Coloriser les lots d'un plan PDF selon leur statut (vide, en travaux, nouvelle version…), relié au listing Excel, avec des remarques par lot.",
+  "status": "ready",
+  "keywords": ["plan", "pdf", "lot", "local", "appartement", "calque", "statut", "travaux", "vide", "excel", "listing", "remarque", "immeuble"]
+}

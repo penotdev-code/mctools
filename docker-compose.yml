@@ -20,9 +20,9 @@ services:
       traefik.http.routers.mctools.rule: Host(`${SITE_HOST:-mctools.paulpenot.fr}`)
       traefik.http.routers.mctools.middlewares: mctools-auth,compress@file
       traefik.http.middlewares.mctools-auth.basicauth.users: ${BASIC_AUTH_USERS:?BASIC_AUTH_USERS manquant dans .env}
-      traefik.http.middlewares.mctools-auth.basicauth.realm: "Boite a outils"
+      traefik.http.middlewares.mctools-auth.basicauth.realm: "MC Tools"
       traefik.http.services.mctools.loadbalancer.server.port: "3000"
-      mc.name: "Boîte à outils"
+      mc.name: "MC Tools"
       mc.description: "Multi-tool client : documents, images, foncier, finances"
       mc.icon: "🧰"
 

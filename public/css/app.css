@@ -52,10 +52,7 @@ a { color: var(--accent); }
 }
 .topbar__inner { display: flex; align-items: center; gap: 12px; min-height: 60px; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; color: var(--text); text-decoration: none; }
-.brand__logo {
-  display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px;
-  background: var(--accent); color: #fff; font-size: 1.1rem;
-}
+.brand__logo { width: 34px; height: 34px; border-radius: 10px; display: block; }
 .topbar__spacer { flex: 1; }
 .topbar__tool { font-weight: 600; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
