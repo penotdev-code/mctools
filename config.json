@@ -1,0 +1,11 @@
+{
+  "name": "Boîte à outils",
+  "tagline": "Vos outils du quotidien, réunis au même endroit",
+  "categories": [
+    { "id": "documents", "name": "Documents", "icon": "📄" },
+    { "id": "images", "name": "Images", "icon": "🖼️" },
+    { "id": "foncier", "name": "Foncier", "icon": "🗺️" },
+    { "id": "finances", "name": "Finances", "icon": "💶" },
+    { "id": "divers", "name": "Divers", "icon": "🔧" }
+  ]
+}

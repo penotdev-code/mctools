@@ -1,0 +1,8 @@
+{
+  "name": "Nom de l'outil",
+  "icon": "🔧",
+  "category": "divers",
+  "description": "Ce que fait l'outil, en une phrase.",
+  "status": "ready",
+  "keywords": ["mots", "clés", "pour la recherche"]
+}

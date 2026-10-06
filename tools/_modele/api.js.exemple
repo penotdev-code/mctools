@@ -1,0 +1,11 @@
+// Partie serveur (optionnelle) d'un outil : renommer en api.js.
+// Appelée pour toute requête sur /api/tools/<id>/… ; ctx contient :
+//   ctx.path     chemin après /api/tools/<id> (ex. "/convertir")
+//   ctx.url      URL complète (ctx.url.searchParams…)
+//   ctx.readBody lit le corps de la requête (Buffer, 50 Mo max)
+//   ctx.dataDir  dossier persistant réservé à l'outil
+//   ctx.send(res, status, objet) / ctx.fail(res, status, message)
+module.exports = async (req, res, ctx) => {
+  if (req.method === 'GET' && ctx.path === '/ping') return ctx.send(res, 200, { pong: true });
+  return ctx.fail(res, 404, 'Introuvable');
+};

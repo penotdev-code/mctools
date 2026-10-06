@@ -1,0 +1,41 @@
+name: Déployer sur le VPS
+
+# À chaque push sur main, le VPS récupère le code et reconstruit l'appli.
+# La clé SSH (secret VPS_SSH_KEY) ne peut lancer QUE le script de
+# déploiement : elle ne donne pas de shell sur le serveur.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://mctools.paulpenot.fr
+    steps:
+      - name: Déploiement sur le VPS
+        env:
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          # Empreinte du serveur épinglée : refuse tout autre serveur
+          echo "57.129.170.247 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBStox2zon+AsLZMunnUNU0aTyhFpTp4JpHNkkGmCuKn" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o StrictHostKeyChecking=yes ubuntu@57.129.170.247
+
+      # Le site est protégé par mot de passe : 401 = en ligne
+      - name: Vérification du site
+        run: |
+          for i in $(seq 1 12); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' https://mctools.paulpenot.fr/)
+            [ "$code" = "401" ] && exit 0
+            sleep 5
+          done
+          echo "Réponse inattendue : $code"; exit 1

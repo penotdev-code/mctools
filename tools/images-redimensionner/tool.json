@@ -1,0 +1,8 @@
+{
+  "name": "Redimensionner des photos",
+  "icon": "🖼️",
+  "category": "images",
+  "description": "Réduire la taille et le poids de photos pour les envoyer par mail ou les mettre dans un dossier.",
+  "status": "ready",
+  "keywords": ["image", "photo", "compresser", "réduire", "jpeg", "webp", "poids"]
+}

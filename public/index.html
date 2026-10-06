@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Boîte à outils</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧰</text></svg>" />
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="/"><span class="brand__logo">🧰</span><span class="app-name">Boîte à outils</span></a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1 class="app-name">Boîte à outils</h1>
+      <p id="tagline"></p>
+    </section>
+
+    <div class="toolbar">
+      <label class="search">
+        <input class="input" type="search" id="search" placeholder="Rechercher un outil…" aria-label="Rechercher un outil" autocomplete="off" />
+      </label>
+      <div class="chips" id="categoryFilter" role="group" aria-label="Filtrer par catégorie"></div>
+    </div>
+
+    <div id="toolList"></div>
+    <p class="empty" id="emptyState" hidden></p>
+  </main>
+
+  <footer class="footer">Accès réservé · <span class="app-name">Boîte à outils</span></footer>
+
+  <script src="/js/portal.js"></script>
+</body>
+</html>

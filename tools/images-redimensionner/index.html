@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Redimensionner des photos</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="/css/app.css" />
+  <style>
+    .results { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); margin-top: 16px; }
+    .result { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 10px; display: grid; gap: 6px; font-size: .88rem; }
+    .result img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; background: var(--border); }
+    .result__name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .result__sizes { color: var(--muted); }
+    .gain { color: var(--accent); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <script src="/js/tool-shell.js"></script>
+  <main class="container tool-page">
+    <h1><span aria-hidden="true">🖼️</span> Redimensionner des photos</h1>
+    <p class="lead">Réduis la taille et le poids de tes photos. Tout se passe dans ton navigateur : les photos ne sont pas envoyées sur Internet.</p>
+
+    <div class="panel">
+      <div class="form-grid">
+        <label class="field">Largeur maximale
+          <select class="input" id="maxSize">
+            <option value="1024">1024 px · mail, petit</option>
+            <option value="1600" selected>1600 px · mail, confortable</option>
+            <option value="2048">2048 px · bonne qualité</option>
+            <option value="3000">3000 px · impression</option>
+            <option value="0">Taille d'origine</option>
+          </select>
+        </label>
+        <label class="field">Format
+          <select class="input" id="format">
+            <option value="image/jpeg" selected>JPEG · compatible partout</option>
+            <option value="image/webp">WebP · plus léger</option>
+            <option value="image/png">PNG · sans perte</option>
+          </select>
+        </label>
+        <label class="field">Qualité <small id="qualityValue">80 %</small>
+          <input type="range" id="quality" min="40" max="95" value="80" />
+        </label>
+      </div>
+
+      <label class="dropzone" id="drop" style="margin-top:16px">
+        <input type="file" id="files" accept="image/*" multiple hidden />
+        <strong>📂 Choisis des photos</strong>
+        <span>ou glisse-les ici</span>
+      </label>
+      <p class="notice error" id="error" hidden></p>
+
+      <div class="actions" id="globalActions" hidden>
+        <button type="button" class="btn" id="downloadAll">⬇️ Tout télécharger</button>
+        <button type="button" class="btn btn--ghost" id="clear">Effacer</button>
+        <span class="notice" id="summary"></span>
+      </div>
+      <div class="results" id="results"></div>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
