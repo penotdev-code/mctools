@@ -1,0 +1,18 @@
+# =============================================================================
+#  Déploiement Dokploy (https://dokploy.paulpenot.fr)
+#  - Domaine, HTTPS et mot de passe partagé (middleware mctools-auth) : réglés
+#    dans Dokploy / Traefik, plus dans ce fichier.
+#  - Chaque push sur main redéploie automatiquement.
+# =============================================================================
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - data:/data
+
+volumes:
+  # Volume existant du VPS (pris en compte par la sauvegarde nocturne)
+  data:
+    name: mctools_data
+    external: true
